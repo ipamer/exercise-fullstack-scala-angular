@@ -25,12 +25,6 @@ object AppFlow {
 
   implicit val system: ActorSystem = IngestActorSystem.system
 
-  // - another way to unmarshal JSON with Akka
-  //implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json()
-  //jsonStreamingSupport.framingDecoder
-  //  .mapAsync(1)(bytes => Unmarshal(bytes).to[Meetup])
-  //  .to(kafkaSink),
-
   // - Kafka settings
   val config = system.settings.config.getConfig("akka.kafka.producer")
   val producerSettings = ProducerSettings(config, new StringSerializer, new StringSerializer)
@@ -57,17 +51,10 @@ object AppFlow {
       .filter(_.isDefined)
 
   val kafkaSink = Producer.plainSink(producerSettings)
-  //val kafkaSink = Sink.foreach[Option[String]] {
-  //  case Some(v) => println(v)
-  //  case None => println(" > JSON was broken.")
-  //}
 
   val mainFlow: Flow[Message, Message, Promise[Option[Message]]] =
     Flow.fromSinkAndSourceMat(
 
-      //Sink.foreach[Message](record => producer.producer.send(new ProducerRecord[Array[Byte], String]("binance", record.toString()))),
-      //Sink.foreach[Message](record => println(record.toString)),
-      //messageToJsonFlow.to(kafkaSink),
       messageToJsonFlow
         .map(meetup => new ProducerRecord[String, String](kafkaTopic, meetup.get))
         .to(kafkaSink),

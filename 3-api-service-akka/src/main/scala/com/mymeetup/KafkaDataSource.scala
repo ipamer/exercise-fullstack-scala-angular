@@ -27,7 +27,6 @@ class KafkaDataSource extends MeetupDataSource {
   private val kafkaBootstrap: String = "localhost:9092"
   private val kafkaTopic: String = "meetups"
   private implicit val system = ActorSystem("Server")
-  //implicit val mat = ActorMaterializer()
 
   def start(processRecord: (String, String) => Future[Done]) = {
     val config = system.settings.config.getConfig("akka.kafka.consumer")

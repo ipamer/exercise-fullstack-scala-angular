@@ -84,8 +84,6 @@ class MeetupActor(dataSource: MeetupDataSource) extends Actor {
 
   private def getJsonResponse: String = {
     try {
-      //val data = Map("data" -> this.top10)
-      //val data = this.top10.toMap
       val data = this.top10.map { case (city, _) =>
         val (n, m) = this.cache.get(city).get
         MeetupResponse(m.group_city, m.group_country, m.group_lat, m.group_lon, n)

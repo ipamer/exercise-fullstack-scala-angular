@@ -20,10 +20,8 @@ object App extends App {
   val BROADCAST_CHECK_INTERVAL = 3.second
 
   implicit val system = ActorSystem("Server")
-  //implicit val mat = ActorMaterializer()
 
   // - Source
-  //private val dataSource = Source(1 to 1000).throttle(1, 1.second, 1, ThrottleMode.Shaping).map(_.toString) // example source
   val kafkaActor = system.actorOf(Props(new MeetupActor(KafkaDataSource())), name = "meetup_actor")
   kafkaActor ! StartCalculating
   implicit val askTimeout = Timeout(5.seconds)
